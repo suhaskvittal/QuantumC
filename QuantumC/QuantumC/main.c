@@ -132,7 +132,7 @@ int __qft_test__() {
 }
 
 int __qsz_test__() {
-    struct qubit_sys* q = create_qubit_sys(2);
+    struct qubit_sys* q = create_qubit_sys(30);
     
     printf("q addr:\t\t%p\n", q);
     printf("s_p addr:\t%p\n", q->state_p);

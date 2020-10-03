@@ -48,15 +48,19 @@ $$ H = \begin{pmatrix}
 \end{pmatrix}
 $$
 We can describe the output of $H$ as two maps:
-1. $\lvert 0 \rangle \mapsto \frac{1}{\sqrt{2}} ( \lvert 0 \rangle + \lvert 1 \rangle )$
-2. $\lvert 1 \rangle \mapsto \frac{1}{\sqrt{2}} ( \lvert 0 \rangle - \lvert 1 \rangle )$
+1. $\lvert 0 \rangle$ $\mapsto$ $\frac{1}{\sqrt{2}}$$( \lvert 0 \rangle + \lvert 1 \rangle )$
+2. $\lvert 1 \rangle$ $\mapsto$ $\frac{1}{\sqrt{2}}$$( \lvert 0 \rangle - \lvert 1 \rangle )$
    
 So, if we want to compute what happens to a qubit 
+
 $$\lvert \Psi \rangle = \alpha \lvert 0 \rangle + \beta \lvert 1 \rangle$$ 
+
 after applying $H$, then we can simply do a few substitutions. Then we get:
+
 $$
-    H \lvert \Psi \rangle = \frac{\alpha + \beta}{\sqrt{2}} \lvert 0 \rangle + \frac{\alpha - \beta}{\sqrt{2}} \lvert 1 \rangle
+H \lvert \Psi \rangle = \frac{\alpha + \beta}{\sqrt{2}} \lvert 0 \rangle + \frac{\alpha - \beta}{\sqrt{2}} \lvert 1 \rangle
 $$
+
 And if you apply $H$ to $H \lvert \Psi \rangle$, you just get $\Psi$ again because $H$ is the inverse of itself.
 
 You may be thinking: this isn't so bad! However, when you start adding multiple qubits in, this becomes more complicated. However, this complication is also where the power of quantum computing comes from.
@@ -73,9 +77,11 @@ Nevertheless, let's introduce a two qubit gate: the controlled NOT, often called
 The CNOT gate performs flips the second qubit if the state of the first qubit is $\lvert 1 \rangle$. So, the possible results are $\lvert 00 \rangle \mapsto \lvert 00 \rangle$, $\lvert 01 \rangle \mapsto \lvert 01 \rangle$, $\lvert 10 \rangle \mapsto \lvert 11 \rangle$, and $\lvert 11 \rangle \mapsto \lvert 10 \rangle$. The CNOT gate is self-invertible. 
 
 Now, with the CNOT gate and Hadamard gate, we can introduce some complications. Let's create a small quantum circuit with two qubits $\lvert \Psi_0 \rangle = \lvert 0 \rangle$ and $\lvert \Psi_1 \rangle = \lvert 0 \rangle$. First, let's perform a Hadamard gate on the first qubit to get $\lvert \Psi_0 \rangle = \frac{1}{\sqrt{2}} \left( \lvert 0 \rangle + \lvert 1 \rangle \right)$. Now, let's apply the CNOT gate on our two qubits. The tensor product of our two qubits is just $\lvert \Psi_0\Psi_1 \rangle = \frac{1}{\sqrt{2}} \left( \lvert 00 \rangle + \lvert 01 \rangle \right)$. When we apply the CNOT gate to this 2-qubit system, we get:
+
 $$
 \lvert \Psi_0\Psi_1 \rangle = \frac{1}{\sqrt{2}} \left( \lvert 00 \rangle + \lvert 11 \rangle \right)
 $$
+
 Now, let's just break down our 2-qubit system into the original two qubits -- this should be easy... right?
 
 ## Entanglement
@@ -85,13 +91,17 @@ Hopefully, you haven't spend too much time trying to break down the system -- it
 You've likely heard something about quantum entanglement before. What really is it? Entanglement, cursorily described, indicates high correlation in measurement. If we take a look at our 2-qubit system we made in the previous section, we have an equal chance of measuring $\lvert 00 \rangle$ and $\lvert 11 \rangle$. This means we can measure the first qubit as a 0 or a 1, and based on the outcome, we can say with high confidence that the second qubit is in the same state without measuring it.
 
 So, what happens if we perform operations on qubits after entangling them? Let's go back to our 2-qubit system:
+
 $$
 \lvert \Psi_0\Psi_1 \rangle = \frac{1}{\sqrt{2}} \left( \lvert 00 \rangle + \lvert 11 \rangle \right)
 $$
-We may be unable to separate the system into 2 qubits, be we can still apply 1-qubit gates to the system: note that a state $\lvert xy \rangle = \lvert x \rangle \lvert y \rangle$. So, apply a hadamard gate to the first qubit. We get:
+
+We may be unable to separate the system into 2 qubits, be we can still apply 1-qubit gates to the system: note that a state $\lvert xy \rangle$ $=$ $\lvert x \rangle$$\lvert y \rangle$. So, apply a hadamard gate to the first qubit. We get:
+
 $$
 \lvert \Psi_0\Psi_1 \rangle = \frac{1}{2} \left( \lvert 00 \rangle + \lvert 01 \rangle + \lvert 10 \rangle - \lvert 11 \rangle \right)
 $$
+
 This is still entangled, but single gates still work! The biggest takeaway, as mind-bending as entanglement can be, is that entanglement simply indicates extremely high correlation for measurement results.
 
 ## The Quantum Advantage

@@ -1,4 +1,4 @@
 idea.txt
-QuantumC/*.xcodeproj
+QuantumC/*.xcodeproj/
 QuantumC/QuantumC/src/main
 QuantumC/QuantumC/bin/*.o

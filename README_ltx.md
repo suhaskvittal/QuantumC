@@ -42,14 +42,17 @@ So, what are these probabilities? That's where the complex numbers come in -- th
 Now, let's consider an operation on a single qubit. One often used quantum gate is the Hadamard gate, which is often denoted as an $H$ in quantum circuit diagrams. As a qubit is simply a sum of two vectors, a quantum gate is just a matrix operation. In fact, because every gate is simply a matrix operation, this makes quantum gates *reversible*, which is a property not found in most classical gates. For example, given the output of a classical OR or AND gate, you can't determine the inputs. However, for a quantum gate, you can simply compute a matrix inverse. But even this is not required, because some gates are self-invertible! In fact, the only part of quantum computing that is irreversible is measurement.
 
 The Hadamard gate is an example of a self-invertible gate. The matrix for the Hadamard gate is written as:
+
 $$ H = \begin{pmatrix}
     1 & 1 \\
     1 & -1
 \end{pmatrix}
 $$
+
 We can describe the output of $H$ as two maps:
-1. $\lvert 0 \rangle$ $\mapsto$ $\frac{1}{\sqrt{2}}$$( \lvert 0 \rangle + \lvert 1 \rangle )$
-2. $\lvert 1 \rangle$ $\mapsto$ $\frac{1}{\sqrt{2}}$$( \lvert 0 \rangle - \lvert 1 \rangle )$
+
+$$\lvert 0 \rangle \mapsto \frac{1}{\sqrt{2}} ( \lvert 0 \rangle + \lvert 1 \rangle )$$
+$$\lvert 1 \rangle \mapsto \frac{1}{\sqrt{2}} ( \lvert 0 \rangle - \lvert 1 \rangle )$$
    
 So, if we want to compute what happens to a qubit 
 
@@ -121,7 +124,7 @@ Take into account these limitations as you explore quantum algorithms!
 QuantumC uses represents quantum states with comparably less bits to other simulators like Microsoft's Q#. QuantumC represents each quantum state as a polar form complex number 
 $$\alpha = r \cdot \exp \left( \frac{2\pi i \cdot k}{n} \right)$$
 
-where $r \in [0, 1], n \in \mathbb{Z}^+$, and $0 \leq k < n$. Specifically, $r$ is represented as a modified half-precision floating point integer with 5 exponent bits and 11 (+1) mantissa bits, and $n$ is a 16-bit positive integer. This mean that each quantum state is 32 bits, so a system of 30 qubits can be represented in exactly 4 GiB, which is much less than the 16 GiB required by Q#. The largest system representable with 16 GiB using QuantumC is 32 qubits.
+where $r \in [0, 1], n \in \mathbb{Z}^+$, and $0 \leq k < n$. Specifically, $r$ is represented as a modified half-precision floating point integer with 5 exponent bits and 11 (+1) mantissa bits, and $n$ is a 16-bit unsigned integer. This mean that each quantum state is 32 bits, so a system of 30 qubits can be represented in exactly 4 GiB, which is much less than the 16 GiB required by Q#. The largest system representable with 16 GiB using QuantumC is 32 qubits.
 
 # Features
 QuantumC implements 12 elementary gates along with the QFT and QFT$^{-1}$ gates. These gates are

@@ -56,4 +56,18 @@ Update: Qubit is now 32 bits (16 bits per state) due to errors with RT(NOT) gate
 
 Qubit is now 48 bits (24 bits per state) due to errors with RT(SWAP) gate.
 	So size is 24 * 2^(n) = 3*2^(n+3)
-	
+
+
+1 QUBIT: a|0> + b|1>
+2 QUBIT: ac|00> + ad|01> + bc|10> + bd|11>
+3 QUBIT: 000 + 001 + 010 + 011 + 100 + 101 + 110 + 111
+N Qubits: a|000..000> + b|000...001> + c|000...010> + ... + z|111...111>
+
+0, 0
+(0 + 1)/rt2, 0
+(00 + 10)/rt2
+(00 + 11)/rt2 = 1/rt2 00 + 0 (01) + 0 (10) + 1/rt2 11
+
+
+
+

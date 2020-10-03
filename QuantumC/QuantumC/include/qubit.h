@@ -6,6 +6,10 @@
 //  Copyright © 2020 Suhas Vittal. All rights reserved.
 //
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef qubit_h
 #define qubit_h
 
@@ -28,6 +32,14 @@ struct qubit_sys* create_zero(void);
 struct qubit_sys* create_uniform(uint8_t);
 struct qubit_sys* create_qubit_sys(uint8_t);
 
+void measure(struct qubit_sys*);
+
+void print_qubit(struct qubit_sys*);
+
 #define QFREE(q)    free(q->state_p); free(q)
 
 #endif /* qubit_h */
+
+#ifdef __cplusplus
+}
+#endif

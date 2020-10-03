@@ -69,17 +69,33 @@
 		22DD95AE2505AF4700CF1D71 /* QuantumC */ = {
 			isa = PBXGroup;
 			children = (
-				22DD95AF2505AF4700CF1D71 /* main.c */,
-				2286C014250F52ED00787EC5 /* qft.h */,
-				2286C015250F52ED00787EC5 /* qft.c */,
-				22DD95B62505AFD800CF1D71 /* qubit.h */,
-				2286C011250EA51E00787EC5 /* storage.h */,
-				2286C012250EA51E00787EC5 /* storage.c */,
-				22DD95B72505AFD800CF1D71 /* qubit.c */,
-				22936F93250736DD002E3E05 /* gates.h */,
-				22936F94250736DD002E3E05 /* gates.c */,
+				22E7B12C252885D300ED5719 /* include */,
+				22E7B12B252885B300ED5719 /* src */,
 			);
 			path = QuantumC;
+			sourceTree = "<group>";
+		};
+		22E7B12B252885B300ED5719 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				22DD95AF2505AF4700CF1D71 /* main.c */,
+				2286C015250F52ED00787EC5 /* qft.c */,
+				2286C012250EA51E00787EC5 /* storage.c */,
+				22DD95B72505AFD800CF1D71 /* qubit.c */,
+				22936F94250736DD002E3E05 /* gates.c */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		22E7B12C252885D300ED5719 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				22DD95B62505AFD800CF1D71 /* qubit.h */,
+				2286C011250EA51E00787EC5 /* storage.h */,
+				22936F93250736DD002E3E05 /* gates.h */,
+				2286C014250F52ED00787EC5 /* qft.h */,
+			);
+			path = include;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

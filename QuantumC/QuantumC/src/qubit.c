@@ -6,16 +6,16 @@
 //  Copyright © 2020 Suhas Vittal. All rights reserved.
 //
 
-#include "qubit.h"
-#include "gates.h"
-#include "storage.h"
+#include "../include/qubit.h"
+#include "../include/gates.h"
+#include "../include/storage.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#include <math.h>
 
-uint8_t G_QUBIT_PRECISION = QUBIT_8_8;
 
 struct qubit_sys* tensor_product(struct qubit_sys* a, struct qubit_sys* b) {
     uint8_t e_level = a->n_qubits + b->n_qubits;
@@ -68,8 +68,9 @@ struct qubit_sys* create_zero() {
 
 struct qubit_sys* create_uniform(uint8_t sys_size) {
     struct qubit_sys* q_p = create_qubit_sys(sys_size);
-    for (uint8_t i = 0; i < sys_size; i++) {
-        p_apply_gate(q_p, &i, 1, &_hadamard);
+    uint16_t uniform_amplitude = _to_b2f(1.0f / sqrtf(1L << sys_size));
+    for (uint64_t i = 0; i < 1L << sys_size; i++) {
+        SET(q_p->state_p, 2*i, uniform_amplitude);
     }
     
     return q_p;
@@ -82,5 +83,32 @@ struct qubit_sys* create_qubit_sys(uint8_t sys_size) {
     q_p->n_qubits = sys_size;
     
     return q_p;
+}
+
+void measure(struct qubit_sys* q) {
+    
+}
+
+void print_qubit(struct qubit_sys* q_p) {
+    uint64_t n_states = 1 << q_p->n_qubits;
+    
+    uint64_t p = 0;
+    while (p < n_states) {
+        uint64_t mod = GET(q_p->state_p, 2*p);
+        uint64_t ang = GET(q_p->state_p, 2*p + 1);
+        
+        uint8_t mod_chunks = MODULUS_BIT_SIZE / 4;
+        while (mod_chunks--) {
+            printf("%llx", (mod >> (mod_chunks * 4)) & 0xF);
+        }
+        printf("|");
+        uint8_t ang_chunks = ANGLE_BIT_SIZE / 4;
+        while (ang_chunks--) {
+            printf("%llx", (ang >> (ang_chunks * 4)) & 0xF);
+        }
+        printf(" ");
+        p++;
+    }
+    printf("\n");
 }
 

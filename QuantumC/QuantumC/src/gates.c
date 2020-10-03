@@ -6,8 +6,8 @@
 //  Copyright © 2020 Suhas Vittal. All rights reserved.
 //
 
-#include "gates.h"
-#include "storage.h"
+#include "../include/gates.h"
+#include "../include/storage.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -59,15 +59,17 @@ uint64_t get_subsys(struct qubit_sys* q, uint8_t* qubit_n, uint8_t qubit_n_size,
     (*subsys_pp)[0] = calloc(subsys_sz, sizeof(uint64_t));
     
     uint8_t other_qubit_n[q->n_qubits];  // 1 if not in qubit_n
+    memset(other_qubit_n, 1, sizeof(other_qubit_n));
+    
+    uint8_t i = 0;
     uint8_t j = 0;
-    for (uint8_t i = 0; i < q->n_qubits; i++) {
-        if (j < qubit_n_size && i == qubit_n[j]) {
+    while (j < qubit_n_size) {
+        if (i == qubit_n[j]) {
             __populate_vert__(qubit_n[j], j + 1, subsys_sz, *subsys_pp);
             other_qubit_n[i] = 0;
             j++;
-        } else {
-            other_qubit_n[i] = 1;
         }
+        i++;
     }
     
     // allocate all the subsystems
@@ -89,7 +91,7 @@ uint64_t get_subsys(struct qubit_sys* q, uint8_t* qubit_n, uint8_t qubit_n_size,
 void __populate_vert__(uint8_t n, uint8_t step, uint64_t sys_sz, uint64_t** sys_p) {
     for (uint8_t i = step; i < sys_sz; i += step) {
         for (uint8_t j = 0; j < step && i < sys_sz; j++) {
-            (*sys_p)[i++] |= 1 << n;
+            (*sys_p)[i++] |= 1L << n;
         }
     }
 }
@@ -154,7 +156,9 @@ void _pauliz(uint8_t** s_p) {
 }
 
 void _pshift(uint8_t** s_p, float phase) {
-    SET(s_p[1], 1, GET(s_p[1], 1) + (phase * ANGLE_BASE) / (2.0f * M_PI));  // simply add the angles
+    if (GET(s_p[1], 0)) {
+        SET(s_p[1], 1, GET(s_p[1], 1) + (phase * ANGLE_BASE) / (2.0f * M_PI));  // simply add the angles
+    }
 }
 
 void _rtnot(uint8_t** s_p) {
@@ -213,7 +217,9 @@ void _cnot(uint8_t** s_p) {
 }
 
 void _cpshift(uint8_t** s_p, float phase) {
-    SET(s_p[3], 1, GET(s_p[3], 1) + (phase * ANGLE_BASE) / (2.0f * M_PI));  // simply add the angles
+    if (GET(s_p[3], 0)) {
+        SET(s_p[3], 1, GET(s_p[3], 1) + (phase * ANGLE_BASE) / (2.0f * M_PI));  // simply add the angles
+    }
 }
 
 void _ccnot(uint8_t** s_p) {
@@ -232,62 +238,4 @@ void _cswap(uint8_t** s_p) {
     SET(s_p[5], 1, GET(s_p[5], 0));
     SET(s_p[6], 0, a10);
     SET(s_p[6], 1, a11);
-}
-
-void __polar_to_rect__(uint8_t* p, float* arr) {
-    uint64_t mod = GET(p, 0);
-    uint64_t ang = GET(p, 1);
-    
-    arr[0] = _from_b2f(mod) * cosf((ang / (ANGLE_BASE * 1.0f)) * 2 * M_PI);
-    arr[1] = _from_b2f(mod) * sinf((ang / (ANGLE_BASE * 1.0f)) * 2 * M_PI);
-}
-
-void __rect_to_polar__(float* st, uint8_t* p) {
-    float mod = sqrtf(SQR(st[0]) + SQR(st[1]));
-    float ang = atan2f(st[1], st[0]);
-
-    uint64_t p0 = _to_b2f(mod);
-    SET(p, 0, p0);
-    if (p0) SET(p, 1, (uint64_t)
-                (ang * (ANGLE_BASE / (2 * M_PI)) + 0.5)
-                );
-    else    SET(p, 1, 0);
-}
-
-uint64_t __get_value__(uint8_t* p, uint64_t k) {
-    uint64_t loc;
-    uint8_t nbytes;
-    __travel__(k, &loc, &nbytes);
-    
-    uint64_t data = 0;
-    for (int i = 0; i < nbytes; i++) {
-        data |= p[loc + i] << (i << 3);
-    }
-    
-    return data;
-}
-
-void __set_value__(uint8_t* p, uint64_t k, uint64_t x) {
-    uint64_t loc;
-    uint8_t nbytes;
-    __travel__(k, &loc, &nbytes);
-    
-    for (int i = 0; i < nbytes; i++) {
-        p[loc + i] = x & 0xFF;
-        x >>= 8;
-    }
-}
-
-uint8_t* __offset__(uint8_t* p, uint64_t k) {
-    uint64_t loc;
-    uint8_t tmp;
-    __travel__(k, &loc, &tmp);  // we don't use tmp
-    return p + loc;
-}
-
-void __travel__(uint64_t k, uint64_t* i_p, uint8_t* b_p) {
-    *i_p =
-            MODULUS_BIT_SIZE / (8 * sizeof(uint8_t)) * ((k + 1) / 2)
-            + ANGLE_BIT_SIZE / (8 * sizeof(uint8_t)) * (k / 2);
-    *b_p = (k % 2 ? ANGLE_BIT_SIZE : MODULUS_BIT_SIZE) / (8 * sizeof(uint8_t));
 }

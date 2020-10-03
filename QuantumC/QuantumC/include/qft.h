@@ -6,6 +6,10 @@
 //  Copyright © 2020 Suhas Vittal. All rights reserved.
 //
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef qft_h
 #define qft_h
 
@@ -18,3 +22,7 @@ void __qft_cpshift__(uint8_t**);
 void __iqft_cpshift__(uint8_t**);
 
 #endif /* qft_h */
+
+#ifdef __cplusplus
+}
+#endif

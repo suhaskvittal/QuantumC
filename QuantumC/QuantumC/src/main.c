@@ -11,32 +11,17 @@
 #include <math.h>
 #include <unistd.h>
 
-#include "qubit.h"
-#include "gates.h"
-#include "storage.h"
-#include "qft.h"
+#include "../include/qubit.h"
+#include "../include/gates.h"
+#include "../include/storage.h"
+#include "../include/qft.h"
 
-void __print_qubit__(struct qubit_sys* q_p) {
-    uint64_t n_states = 1 << q_p->n_qubits;
-    
-    uint64_t p = 0;
-    while (p < n_states) {
-        uint64_t mod = GET(q_p->state_p, 2*p);
-        uint64_t ang = GET(q_p->state_p, 2*p + 1);
-        
-        uint8_t mod_chunks = MODULUS_BIT_SIZE / 4;
-        while (mod_chunks--) {
-            printf("%llx", (mod >> (mod_chunks * 4)) & 0xF);
-        }
-        printf("|");
-        uint8_t ang_chunks = ANGLE_BIT_SIZE / 4;
-        while (ang_chunks--) {
-            printf("%llx", (ang >> (ang_chunks * 4)) & 0xF);
-        }
-        printf(" ");
-        p++;
+void __list__(struct qubit_sys* q_p) {
+    float buf[2];
+    for (uint64_t i = 0; i < 1L << q_p->n_qubits; i++) {
+        __polar_to_rect__(MOV(q_p->state_p, i * 2), buf);
+        printf("%llu: %f + %fj\n", i, buf[0], buf[1]);
     }
-    printf("\n");
 }
 
 int __compress_bell_state__() {
@@ -44,17 +29,17 @@ int __compress_bell_state__() {
     
     // bell state: 1/rt(2) [00 + 11]
     
-    uint64_t inv_rt2_b254 = _to_b2f(sqrtf(0.5f));
-    printf("1/sqrt(2)\t--b2f-> %llx (%f) \n",
+    uint16_t inv_rt2_b254 = _to_b2f(sqrtf(0.5f));
+    printf("1/sqrt(2)\t--b2f-> %x (%f) \n",
            inv_rt2_b254, _from_b2f(inv_rt2_b254));
-    printf("0.5\t\t--b2f-> %llx (%f) \n",
+    printf("0.5\t\t--b2f-> %x (%f) \n",
            _to_b2f(0.5f), _from_b2f(_to_b2f(0.5f)));
-    uint64_t inv_rt2_sqr_b254 =
+    uint16_t inv_rt2_sqr_b254 =
         __b2fmul__(inv_rt2_b254, inv_rt2_b254);
-    printf("b254 sqr(rt(2))\t\t %llx (%f)\n",
+    printf("b254 sqr(rt(2))\t\t %x (%f)\n",
            inv_rt2_sqr_b254, _from_b2f(inv_rt2_sqr_b254));
-    uint64_t bell_state_p = __b2fadd__(inv_rt2_sqr_b254, inv_rt2_sqr_b254);
-    printf("P(00) + P(11)\t\t %llx (%f)\n", bell_state_p, _from_b2f(bell_state_p));
+    uint16_t bell_state_p = __b2fadd__(inv_rt2_sqr_b254, inv_rt2_sqr_b254);
+    printf("P(00) + P(11)\t\t %x (%f)\n", bell_state_p, _from_b2f(bell_state_p));
     
     printf("----------------------------------------\n");
     return 0;
@@ -80,20 +65,20 @@ int __test_ent__() {
      This yields a Bell state.
      */
     
-    printf("A:\t\t"); __print_qubit__(a);
-    printf("B:\t\t"); __print_qubit__(b);
+    printf("A:\t\t"); print_qubit(a);
+    printf("B:\t\t"); print_qubit(b);
     apply_gate(a, &_hadamard);
-    printf("H(A):\t\t"); __print_qubit__(a);
+    printf("H(A):\t\t"); print_qubit(a);
     struct qubit_sys* ab = tensor_product(a, b);  // a and b have been freed
-    printf("AB:\t\t"); __print_qubit__(ab);
+    printf("AB:\t\t"); print_qubit(ab);
     apply_gate(ab, &_cnot);
     
     /* This final output should yield a representation of
      1/rt(2) in the 1st and 4th state of ab. To see the
      decimal representation, use the _from_b2f function. */
     
-    printf("CNOT(AB):\t"); __print_qubit__(ab);
-    
+    printf("CNOT(AB):\t"); print_qubit(ab);
+    __list__(ab);
     printf("---------------------------------------------\n");
     
     QFREE(ab);
@@ -105,7 +90,7 @@ int __uniform_test__() {
     struct qubit_sys* q = create_uniform(4);
     printf("---------------UNIFORM TEST------------------\n");
 
-    printf("Q:\t\t"); __print_qubit__(q);
+    printf("Q:\t\t"); print_qubit(q);
     
     printf("---------------------------------------------\n");
     
@@ -115,15 +100,16 @@ int __uniform_test__() {
 }
 
 int __qft_test__() {
-    struct qubit_sys* q = create_uniform(4);
+    struct qubit_sys* q = create_qubit_sys(4);
     
     printf("------------------QFT TEST-------------------\n");
     
-    printf("Q:\t\t"); __print_qubit__(q);
+    printf("Q:\t\t"); print_qubit(q);
     qft(q);
-    printf("QFT(Q):\t\t"); __print_qubit__(q);
+    printf("QFT(Q):\t\t"); print_qubit(q);
     iqft(q);
-    printf("IQFT(QFT(Q)):\t"); __print_qubit__(q);
+    printf("IQFT(QFT(Q)):\t"); print_qubit(q);
+    
     printf("---------------------------------------------\n");
     
     QFREE(q);
@@ -132,7 +118,7 @@ int __qft_test__() {
 }
 
 int __qsz_test__() {
-    struct qubit_sys* q = create_qubit_sys(30);
+    struct qubit_sys* q = create_qubit_sys(8);
     
     printf("q addr:\t\t%p\n", q);
     printf("s_p addr:\t%p\n", q->state_p);
@@ -142,15 +128,11 @@ int __qsz_test__() {
 }
 
 int main(int argc, const char * argv[]) {
-    G_QUBIT_PRECISION = QUBIT_8_16;
-    
-    printf("MODULUS_BASE: %llu\n", MODULUS_BASE);
-    printf("ARGUMENT BASE: %llu\n", ANGLE_BASE);
-    
-    // __test_ent__();
-    // __uniform_test__();
-    // __qft_test__();
-    __qsz_test__();
+    __compress_bell_state__();
+    __test_ent__();
+    __uniform_test__();
+    __qft_test__();
+    // __qsz_test__();
     
     //printf("Press any key to exit...\n");
     //getchar();

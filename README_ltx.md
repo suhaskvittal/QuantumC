@@ -47,7 +47,13 @@ $$ H = \begin{pmatrix}
     1 & -1
 \end{pmatrix}
 $$
-$H$ maps $\lvert 0 \rangle$ to $\frac{1}{\sqrt{2}}\left( \lvert 0 \rangle + \lvert 1 \rangle \right)$ and $\lvert 1 \rangle$ to $\frac{1}{\sqrt{2}}\left( \lvert 0 \rangle - \lvert 1 \rangle \right)$. So, if we want to compute what happens to a qubit $\lvert \Psi \rangle = \alpha \lvert 0 \rangle + \beta \lvert 1 \rangle$ after applying $H$ to $\lvert \Psi \rangle$, then we can simply do a few substitutions. Then we get:
+We can describe the output of $H$ as two maps:
+1. $\lvert 0 \rangle \mapsto \frac{1}{\sqrt{2}} ( \lvert 0 \rangle + \lvert 1 \rangle )$
+2. $\lvert 1 \rangle \mapsto \frac{1}{\sqrt{2}} ( \lvert 0 \rangle - \lvert 1 \rangle )$
+   
+So, if we want to compute what happens to a qubit 
+$$\lvert \Psi \rangle = \alpha \lvert 0 \rangle + \beta \lvert 1 \rangle$$ 
+after applying $H$, then we can simply do a few substitutions. Then we get:
 $$
     H \lvert \Psi \rangle = \frac{\alpha + \beta}{\sqrt{2}} \lvert 0 \rangle + \frac{\alpha - \beta}{\sqrt{2}} \lvert 1 \rangle
 $$
